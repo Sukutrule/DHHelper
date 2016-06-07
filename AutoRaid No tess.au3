@@ -1,5 +1,4 @@
 #include <ImageSearch.au3>
-#include <Tesseract.au3>
 #include <ButtonConstants.au3>
 #include <EditConstants.au3>
 #include <GuiConstants.au3>
@@ -7,6 +6,7 @@
 #include <StaticConstants.au3>
 #include <TabConstants.au3>
 #include <WindowsConstants.au3>
+#include <OCR.au3>
 #Region ### START Koda GUI section ### Form=C:\Users\Nicolas\Desktop\koda autoit gui\Forms\Deck Heroes Helper.kxf
 $Form1 = GUICreate("Deck Heroes Helper", 583, 450, 192, 124)
 $mainTabs = GUICtrlCreateTab(0, 0, 585, 457)
@@ -49,7 +49,8 @@ GUISetState(@SW_SHOW)
 Global $minGlory = 10000
 Global $intervalSearch = 500
 Global $autoAttackRaid = false
-Global $y = 0, $x = 0, $bsPos
+Global $y = 0, $x = 0
+Global $bsPos;
 Global $windowName = 'Bluestacks App Player'
 Global $stopAll = false
 
@@ -126,6 +127,7 @@ EndFunc
 
 Func findBluestacksWindow()
    ;~ WinActivate($windowName)
+   If Not WinExists($windowName) Then Return SetError(1, 0, 0)
    $bsPos = WinGetPos($windowName)
 EndFunc
 
@@ -148,7 +150,12 @@ Func searchBigGlory()
 	  Return
    EndIf
    Sleep($intervalSearch)
-   Local $text = _TesseractWinCapture($windowName, '', 0, '', 1, 5, 720, 140, 580, 520, 0)
+   findBluestacksWindow();
+;~    Local $text = _TesseractWinCapture($windowName, '', 0, '', 1, 5, 720, 140, 580, 520, 0)
+;~    ConsoleWrite($bsPos[0] + 630 & ' - ' & $bsPos[1] + 130 & ' - ' & @DesktopWidth - ($bsPos[0] + $bsPos[2]) + 87 & ' - ' & @DesktopHeight - ($bsPos[1] + $bsPos[3]) + 400 & @CRLF)
+   Local $text =  _OCR($bsPos[0] + 630, $bsPos[1] + 130, @DesktopWidth - ($bsPos[0] + $bsPos[2]) + 87, @DesktopHeight - ($bsPos[1] + $bsPos[3]) + 400, 0xFFFFFF);
+   ConsoleWrite($text)
+   Return False
    Local $thisGlory = 0
    $thisGlory = Number(StringReplace($text, 'Glory Points: ', ''))
    addToConsole('Glory: ' & $thisGlory)

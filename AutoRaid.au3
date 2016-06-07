@@ -76,6 +76,7 @@ Func findWhereAmI()
 EndFunc
 
 Func startRaidSearch()
+   $stopAll = False
    $autoAttackRaid = IsChecked($chkAutoAttack)
    $minGlory = GUICtrlRead($txtMinGlory)
    searchBigGlory()
